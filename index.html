@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>咪仔織譜秘笈</title>
     <style>
-        :root { --p: #efa8b8; --text: #333; --gray: #f2f2f2; }
+        :root { --p: #efa8b8; --text: #333; }
         body { font-family: -apple-system, sans-serif; background: #fafafa; margin: 0; padding-bottom: 80px; color: var(--text); -webkit-tap-highlight-color: transparent; }
         
         /* 標題與分頁 */
         .header-box { background: white; padding: 20px 15px 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
         h1 { margin: 0 0 12px 0; font-size: 1.3rem; color: #444; letter-spacing: 1px; }
         .tabs { display: flex; border-radius: 20px; overflow: hidden; background: #eee; padding: 3px; }
-        .tab { flex: 1; padding: 10px; cursor: pointer; border-radius: 18px; font-size: 14px; text-align: center; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; border-radius: 18px; font-size: 14px; text-align: center; transition: 0.2s; }
         .tab.active { background: #333; color: white; font-weight: bold; }
 
         /* 作品牆 */
@@ -21,32 +21,43 @@
         .card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #f0f0f0; display: block; }
         .card-info { padding: 10px; text-align: center; font-size: 14px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* 全螢幕彈窗 */
+        /* 主要彈窗 (瀏覽/編輯) */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 10; }
-        .modal-body { padding: 20px; }
+        .modal-body { padding: 20px; padding-bottom: 60px; }
+
+        /* 圖片放大檢視 (Lightbox) */
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
+        #lightbox-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
+        .lightbox-hint { position: absolute; bottom: 20px; color: white; font-size: 14px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; }
 
         /* 瀏覽模式樣式 */
         .view-title { font-size: 1.5rem; margin-bottom: 15px; font-weight: bold; color: #222; }
         .view-section { margin-bottom: 25px; }
-        .view-label { font-size: 13px; color: var(--p); font-weight: bold; margin-bottom: 5px; display: block; text-transform: uppercase; }
-        .view-content { line-height: 1.6; white-space: pre-wrap; font-size: 16px; background: #fcfcfc; padding: 10px; border-radius: 8px; border-left: 3px solid #eee; }
+        .view-label { font-size: 13px; color: var(--p); font-weight: bold; margin-bottom: 8px; display: block; }
+        .view-content { line-height: 1.7; white-space: pre-wrap; font-size: 16px; background: #fcfcfc; padding: 12px; border-radius: 10px; border: 1px solid #eee; color: #444; }
         
-        /* 圖片展示 */
-        .img-gallery { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
-        .gallery-item { width: 120px; height: 120px; flex-shrink: 0; object-fit: cover; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; }
+        /* 圖片展示區 */
+        .img-gallery { display: flex; gap: 12px; overflow-x: auto; padding: 5px; margin-bottom: 20px; }
+        /* 瀏覽模式的圖片 (可點擊) */
+        .view-gallery-item { width: 130px; height: 130px; flex-shrink: 0; object-fit: cover; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; cursor: zoom-in; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        /* 編輯模式的預覽圖 (不可點擊) */
+        .edit-gallery-item { width: 100px; height: 100px; flex-shrink: 0; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; opacity: 0.8; }
 
         /* 編輯模式表單 */
         label { font-size: 13px; color: #999; font-weight: bold; margin-top: 15px; display: block; }
-        input, textarea, select { width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; }
+        input, textarea, select { width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; outline: none; }
+        input:focus, textarea:focus { border-color: var(--p); background: white; }
         
         /* 按鈕系統 */
-        .btn-round { padding: 8px 18px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; }
-        .btn-edit { background: var(--p); color: white; }
-        .btn-save { background: #333; color: white; width: 100%; padding: 15px; font-size: 16px; margin-top: 20px; border-radius: 12px; }
-        .btn-close { background: none; font-size: 24px; color: #999; border: none; }
+        .btn-round { padding: 8px 20px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }
+        .btn-edit { background: var(--p); color: white; box-shadow: 0 2px 5px rgba(239,168,184,0.4); }
+        .btn-cancel { background: #eee; color: #666; }
+        .btn-save { background: #333; color: white; width: 100%; padding: 15px; font-size: 16px; margin-top: 20px; border-radius: 12px; font-weight: bold; }
+        .btn-close { background: none; font-size: 28px; color: #999; border: none; padding: 0 10px; }
         
-        .fab { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: var(--p); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; box-shadow: 0 4px 15px rgba(239,168,184,0.4); z-index: 500; }
+        .fab { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: var(--p); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; box-shadow: 0 4px 15px rgba(239,168,184,0.4); z-index: 500; transition: transform 0.2s; }
+        .fab:active { transform: scale(0.95); }
         .hidden { display: none; }
     </style>
 </head>
@@ -63,11 +74,14 @@
 <div class="grid" id="project-grid"></div>
 <button class="fab" onclick="openAdd()">+</button>
 
+<div id="lightbox" onclick="closeLightbox()">
+    <img id="lightbox-img" src="" onclick="event.stopPropagation()"> <div class="lightbox-hint">點擊背景關閉</div>
+</div>
+
 <div id="modal">
     <div class="modal-header">
         <button class="btn-close" onclick="closeModal()">×</button>
-        <div id="modal-nav-btns">
-            </div>
+        <div id="modal-nav-btns"></div>
     </div>
 
     <div class="modal-body">
@@ -85,9 +99,9 @@
         </div>
 
         <div id="edit-mode" class="hidden">
-            <label>更新照片 (最多 3 張)：</label>
-            <div id="e-img-preview" class="img-gallery"></div>
-            <input type="file" id="e-file" accept="image/*" multiple onchange="processImages(this)">
+            <label style="margin-top:0;">更新照片 (最多 3 張)：</label>
+            <div id="e-img-preview" class="img-gallery" style="min-height: 100px; background: #f9f9f9; border-radius: 10px; align-items: center; padding: 10px;"></div>
+            <input type="file" id="e-file" accept="image/*" multiple onchange="processImages(this)" style="margin-top:10px;">
             
             <label>作品名稱：</label>
             <input type="text" id="e-title">
@@ -105,13 +119,13 @@
             <textarea id="e-notes" rows="4"></textarea>
             
             <button class="btn-save" id="save-btn" onclick="saveData()">儲存修改內容</button>
-            <button id="del-btn" style="width:100%; margin-top:30px; color:#ff7675; border:none; background:none; font-size:13px;" onclick="deleteData()">刪除這份秘笈</button>
+            <button id="del-btn" style="width:100%; margin-top:30px; color:#ff7675; border:none; background:none; font-size:13px; padding: 10px;" onclick="deleteData()">刪除這份秘笈</button>
         </div>
     </div>
 </div>
 
 <script>
-    const DB_KEY = 'mizai_final_v8';
+    const DB_KEY = 'mizai_final_v9'; // 更新版本號以區隔舊資料
     let projects = JSON.parse(localStorage.getItem(DB_KEY)) || [];
     let currentType = '鉤針';
     let editingId = null;
@@ -127,37 +141,45 @@
         const grid = document.getElementById('project-grid');
         const list = projects.filter(p => p.type === currentType);
         if (list.length === 0) {
-            grid.innerHTML = `<div style="grid-column:1/3; text-align:center; padding:50px 0; color:#ccc;">目前沒有紀錄</div>`;
+            grid.innerHTML = `<div style="grid-column:1/3; text-align:center; padding:60px 0; color:#ccc; font-size:14px;">目前沒有${currentType}紀錄<br>點擊右下角 + 新增</div>`;
             return;
         }
         grid.innerHTML = list.map(p => `
             <div class="card" onclick="openDetail(${p.id})">
-                <img src="${(p.imgs && p.imgs[0]) ? p.imgs[0] : 'https://via.placeholder.com/150?text=No+Photo'}" class="card-img">
+                <img src="${(p.imgs && p.imgs[0]) ? p.imgs[0] : 'https://via.placeholder.com/300?text=No+Photo'}" class="card-img" loading="lazy">
                 <div class="card-info">${p.title}</div>
             </div>
         `).join('');
     }
 
-    // 進入詳細瀏覽模式
+    // 打開圖片放大檢視
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').style.display = 'flex';
+    }
+    function closeLightbox() {
+        document.getElementById('lightbox').style.display = 'none';
+    }
+
     function openDetail(id) {
         editingId = id;
         const p = projects.find(item => item.id === id);
         if (!p) return;
 
-        // 填充瀏覽內容
+        // 填充瀏覽內容 (加入 onclick 事件以開啟大圖)
         document.getElementById('v-title').innerText = p.title;
         document.getElementById('v-steps').innerText = p.steps || "尚無步驟紀錄";
         document.getElementById('v-notes').innerText = p.notes || "尚無備註";
-        document.getElementById('v-imgs').innerHTML = (p.imgs || []).map(src => `<img src="${src}" class="gallery-item">`).join('');
+        document.getElementById('v-imgs').innerHTML = (p.imgs || []).map(src => 
+            `<img src="${src}" class="view-gallery-item" onclick="openLightbox('${src}')">`
+        ).join('');
         
-        // 設定導覽按鈕
         document.getElementById('modal-nav-btns').innerHTML = `<button class="btn-round btn-edit" onclick="toggleEditMode(true)">編輯</button>`;
         
-        toggleEditMode(false); // 確保是瀏覽模式
+        toggleEditMode(false);
         document.getElementById('modal').style.display = 'block';
     }
 
-    // 切換 瀏覽/編輯 介面
     function toggleEditMode(isEdit) {
         const viewArea = document.getElementById('view-mode');
         const editArea = document.getElementById('edit-mode');
@@ -166,9 +188,8 @@
         if (isEdit) {
             viewArea.classList.add('hidden');
             editArea.classList.remove('hidden');
-            navBtns.innerHTML = `<button class="btn-round" style="background:#eee" onclick="toggleEditMode(false)">取消</button>`;
+            navBtns.innerHTML = `<button class="btn-round btn-cancel" onclick="toggleEditMode(false)">取消</button>`;
             
-            // 填充表單原資料
             const p = projects.find(item => item.id === editingId) || { title:'', type:currentType, steps:'', notes:'', imgs:[] };
             document.getElementById('e-title').value = p.title;
             document.getElementById('e-type').value = p.type;
@@ -192,17 +213,18 @@
         document.getElementById('e-title').value = "";
         document.getElementById('e-steps').value = "";
         document.getElementById('e-notes').value = "";
-        document.getElementById('e-img-preview').innerHTML = "";
+        updateEditPreview();
         document.getElementById('del-btn').style.display = 'none';
         document.getElementById('modal').style.display = 'block';
     }
 
-    // 圖片壓縮邏輯 (手機優化)
+    // 圖片處理 (提升畫質)
     async function processImages(input) {
         const files = Array.from(input.files).slice(0, 3);
         const saveBtn = document.getElementById('save-btn');
         saveBtn.disabled = true;
-        saveBtn.innerText = "處理圖片中...";
+        saveBtn.innerText = "高畫質處理中...";
+        saveBtn.style.opacity = 0.7;
 
         tempImgs = []; 
         for (let file of files) {
@@ -214,12 +236,14 @@
                     img.src = e.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        const MAX_WIDTH = 350;
+                        // 提升解析度至 600px
+                        const MAX_WIDTH = 600;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * (MAX_WIDTH / img.width);
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        resolve(canvas.toDataURL('image/jpeg', 0.4));
+                        // 提升畫質至 0.7
+                        resolve(canvas.toDataURL('image/jpeg', 0.7));
                     };
                 };
             });
@@ -228,10 +252,12 @@
         updateEditPreview();
         saveBtn.disabled = false;
         saveBtn.innerText = "儲存修改內容";
+        saveBtn.style.opacity = 1;
     }
 
     function updateEditPreview() {
-        document.getElementById('e-img-preview').innerHTML = tempImgs.map(src => `<img src="${src}" class="gallery-item">`).join('');
+        const box = document.getElementById('e-img-preview');
+        box.innerHTML = tempImgs.map(src => `<img src="${src}" class="edit-gallery-item">`).join('') || '<span style="color:#ccc; font-size:13px;">(尚未選擇照片)</span>';
     }
 
     function saveData() {
@@ -255,12 +281,10 @@
                 projects.push(data);
             }
             localStorage.setItem(DB_KEY, JSON.stringify(projects));
-            
-            // 儲存後自動回到該作品的瀏覽模式
             openDetail(data.id);
             renderWall();
         } catch (e) {
-            alert("空間不足，請刪除部分照片或作品");
+            alert("儲存失敗：可能是照片檔案過大，請嘗試減少照片數量。");
         }
     }
 

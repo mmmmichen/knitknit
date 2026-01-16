@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>織譜紀錄手帳</title>
+    <style>
+        :root { --crochet-color: #efa8b8; --knit-color: #8fb6d9; --bg: #f5f5f5; }
+        body { font-family: -apple-system, "Segoe UI", sans-serif; background: var(--bg); margin: 0; padding: 0; padding-bottom: 80px; }
+        
+        /* 分頁切換 */
+        .tabs { display: flex; background: white; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .tab { flex: 1; text-align: center; padding: 15px; font-weight: bold; cursor: pointer; color: #888; border-bottom: 3px solid transparent; }
+        .tab.active[data-type="鉤針"] { color: var(--crochet-color); border-bottom-color: var(--crochet-color); }
+        .tab.active[data-type="棒針"] { color: var(--knit-color); border-bottom-color: var(--knit-color); }
+
+        .container { padding: 15px; }
+        .project-card { background: white; border-radius: 15px; overflow: hidden; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.08); }
+        .project-img { width: 100%; height: 200px; object-fit: cover; background: #eee; display: block; }
+        .project-info { padding: 15px; }
+        .project-info h3 { margin: 0 0 10px 0; display: flex; justify-content: space-between; }
+        .detail-label { font-size: 13px; color: #999; margin-top: 10px; display: block; }
+        .detail-content { font-size: 14px; white-space: pre-wrap; background: #fafafa; padding: 8px; border-radius: 5px; margin-top: 5px; }
+
+        /* 新增按鈕 */
+        .fab { position: fixed; bottom: 20px; right: 20px; width: 60px; height: 60px; background: #333; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); border: none; cursor: pointer; }
+
+        /* 彈窗 */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; z-index: 1000; }
+        .modal-body { background: white; width: 90%; max-height: 80%; overflow-y: auto; border-radius: 15px; padding: 20px; }
+        input, textarea, select { width: 100%; margin: 10px 0; padding: 12px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; }
+        .save-btn { background: #333; color: white; border: none; width: 100%; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="tabs">
+    <div class="tab active" data-type="鉤針" onclick="switchTab('鉤針')">鉤針紀錄</div>
+    <div class="tab" data-type="棒針" onclick="switchTab('棒針')">棒針紀錄</div>
+</div>
+
+<div class="container" id="project-list">
+    </div>
+
+<button class="fab" onclick="showModal()">+</button>
+
+<div id="modal">
+    <div class="modal-body">
+        <h2 id="modal-title">新增作品</h2>
+        <select id="f-type">
+            <option value="鉤針">類別：鉤針 (Crochet)</option>
+            <option value="棒針">類別：棒針 (Knitting)</option>
+        </select>
+        <input type="text" id="f-title" placeholder="作品名稱">
+        <label style="font-size: 14px; color: #666;">上傳圖片：</label>
+        <input type="file" id="f-img" accept="image/*">
+        <textarea id="f-steps" rows="4" placeholder="製作步驟 (例如: R1-R10 織法...)"></textarea>
+        <textarea id="f-notes" rows="3" placeholder="備註 (使用線材、針號、給誰的...)"></textarea>
+        <button class="save-btn" onclick="saveProject()">儲存紀錄</button>
+        <button onclick="closeModal()" style="width:100%; background:none; border:none; color:#999; margin-top:10px;">取消</button>
+    </div>
+</div>
+
+<script>
+    let currentTab = '鉤針';
+    let projects = JSON.parse(localStorage.getItem('knitting_v2')) || [];
+
+    function switchTab(type) {
+        currentTab = type;
+        document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.type === type));
+        render();
+    }
+
+    function showModal() { document.getElementById('modal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('modal').style.display = 'none'; }
+
+    async function saveProject() {
+        const fileInput = document.getElementById('f-img');
+        let imgData = "";
+        
+        if (fileInput.files[0]) {
+            imgData = await toBase64(fileInput.files[0]);
+        }
+
+        const newProject = {
+            id: Date.now(),
+            type: document.getElementById('f-type').value,
+            title: document.getElementById('f-title').value || "未命名作品",
+            img: imgData,
+            steps: document.getElementById('f-steps').value,
+            notes: document.getElementById('f-notes').value
+        };
+
+        projects.push(newProject);
+        localStorage.setItem('knitting_v2', JSON.stringify(projects));
+        closeModal();
+        render();
+        // 清空表單
+        document.getElementById('f-title').value = "";
+        document.getElementById('f-steps').value = "";
+        document.getElementById('f-notes').value = "";
+    }
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
+    function deleteProject(id) {
+        if(confirm('確定要刪除這份紀錄嗎？')) {
+            projects = projects.filter(p => p.id !== id);
+            localStorage.setItem('knitting_v2', JSON.stringify(projects));
+            render();
+        }
+    }
+
+    function render() {
+        const list = document.getElementById('project-list');
+        const filtered = projects.filter(p => p.type === currentTab);
+        
+        list.innerHTML = filtered.length ? filtered.map(p => `
+            <div class="project-card">
+                ${p.img ? `<img src="${p.img}" class="project-img">` : `<div class="project-img" style="display:flex; align-items:center; justify-content:center; color:#ccc;">無圖片</div>`}
+                <div class="project-info">
+                    <h3>${p.title} <span onclick="deleteProject(${p.id})" style="color:#ff7675; font-size:14px;">刪除</span></h3>
+                    <span class="detail-label">📍 製作步驟：</span>
+                    <div class="detail-content">${p.steps || '尚無紀錄'}</div>
+                    <span class="detail-label">📝 備註：</span>
+                    <div class="detail-content">${p.notes || '尚無紀錄'}</div>
+                </div>
+            </div>
+        `).join('') : `<p style="text-align:center; color:#999; margin-top:50px;">目前沒有${currentTab}的作品紀錄</p>`;
+    }
+
+    render();
+</script>
+
+</body>
+</html>

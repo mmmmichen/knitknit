@@ -5,46 +5,48 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>咪仔織譜秘笈</title>
     <style>
-        :root { --p: #efa8b8; --s: #8fb6d9; --bg: #f9f9fb; --text: #444; }
-        body { font-family: -apple-system, sans-serif; background: var(--bg); margin: 0; padding-bottom: 80px; color: var(--text); }
+        :root { --p: #efa8b8; --s: #8fb6d9; --bg: #fdfdfd; }
+        body { font-family: -apple-system, "Microsoft JhengHei", sans-serif; background: var(--bg); margin: 0; padding-bottom: 100px; color: #333; }
         
-        /* 標題與頁籤 */
-        .header-box { background: white; padding: 20px 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        h1 { margin: 0; font-size: 1.5rem; color: #333; letter-spacing: 2px; }
-        .tabs { display: flex; border-radius: 25px; overflow: hidden; border: 1px solid #eee; margin-top: 15px; background: #f0f0f0; }
-        .tab { flex: 1; padding: 10px; cursor: pointer; font-size: 14px; transition: 0.3s; }
+        /* Header & Tabs */
+        .header-box { background: white; padding: 20px 15px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
+        h1 { margin: 0 0 15px 0; font-size: 1.4rem; color: #444; letter-spacing: 1px; }
+        .tabs { display: flex; border-radius: 20px; overflow: hidden; background: #eee; padding: 3px; }
+        .tab { flex: 1; padding: 8px; cursor: pointer; border-radius: 18px; font-size: 14px; text-align: center; }
         .tab.active { background: #333; color: white; font-weight: bold; }
 
-        /* 作品牆 */
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; padding: 15px; }
-        .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #eee; display: block; }
-        .card-info { padding: 10px; text-align: center; font-weight: bold; font-size: 14px; }
+        /* Grid View */
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; }
+        .card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 8px rgba(0,0,0,0.08); border: 1px solid #eee; }
+        .card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #f0f0f0; display: block; }
+        .card-info { padding: 8px; text-align: center; font-size: 13px; font-weight: 600; }
 
-        /* 彈窗詳情頁 */
-        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 1000; overflow-y: auto; }
-        .modal-content { background: white; min-height: 100%; width: 100%; padding: 20px; box-sizing: border-box; border-radius: 0; }
+        /* Modal Details */
+        #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; overflow-y: auto; }
+        .modal-content { padding: 20px; max-width: 600px; margin: auto; }
         
-        /* 多圖顯示區 */
-        .img-gallery { display: flex; gap: 8px; overflow-x: auto; margin-bottom: 15px; padding-bottom: 5px; }
-        .gallery-item { width: 120px; height: 120px; flex-shrink: 0; object-fit: cover; border-radius: 8px; background: #eee; border: 1px solid #ddd; }
+        /* Multi-Image Gallery */
+        .img-gallery { display: flex; gap: 8px; overflow-x: auto; margin: 10px 0; padding: 5px 0; min-height: 80px; }
+        .gallery-item { width: 100px; height: 100px; flex-shrink: 0; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
         
-        /* 表單元素 */
-        label { font-size: 13px; color: #888; margin-top: 10px; display: block; }
-        input, textarea, select { width: 100%; margin: 5px 0 15px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; }
+        /* Form Styling */
+        label { font-size: 12px; color: #888; font-weight: bold; margin-top: 15px; display: block; }
+        input, textarea, select { width: 100%; margin: 5px 0 10px 0; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; box-sizing: border-box; background: #fbfbfb; }
         
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .btn { flex: 1; padding: 15px; border-radius: 12px; border: none; font-weight: bold; font-size: 16px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 25px; }
+        .btn { flex: 1; padding: 15px; border-radius: 10px; border: none; font-weight: bold; font-size: 16px; cursor: pointer; }
         .btn-save { background: #333; color: white; }
-        .btn-cancel { background: #eee; color: #666; }
+        .btn-save:disabled { background: #ccc; }
+        .btn-cancel { background: #f0f0f0; color: #666; }
         
-        .fab { position: fixed; bottom: 25px; right: 25px; width: 65px; height: 65px; background: var(--p); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 35px; border: none; box-shadow: 0 5px 15px rgba(239,168,184,0.4); z-index: 99; }
+        .fab { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: var(--p); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.2); z-index: 500; }
+        #status-msg { font-size: 12px; color: var(--p); text-align: center; margin-bottom: 5px; display: none; }
     </style>
 </head>
 <body>
 
 <div class="header-box">
-    <h1>咪仔織譜秘笈</h1>
+    <h1>🧶 咪仔織譜秘笈</h1>
     <div class="tabs">
         <div class="tab active" onclick="switchTab('鉤針')">鉤針作品</div>
         <div class="tab" onclick="switchTab('棒針')">棒針作品</div>
@@ -56,40 +58,43 @@
 
 <div id="modal">
     <div class="modal-content">
-        <h2 id="m-header" style="margin-top:0;">作品詳細內容</h2>
+        <h2 id="m-header" style="margin-top:0;">編輯織譜</h2>
         
-        <label>照片牆 (最多 5 張)：</label>
+        <label>作品照片 (最多 5 張)：</label>
         <div id="img-gallery-box" class="img-gallery"></div>
+        <div id="status-msg">圖片壓縮中，請稍候...</div>
         <input type="file" id="m-img" accept="image/*" multiple onchange="processImages(this)">
         
         <label>作品名稱：</label>
-        <input type="text" id="m-title" placeholder="請輸入作品名稱">
+        <input type="text" id="m-title" placeholder="輸入名稱...">
         
-        <label>編織類別：</label>
+        <label>類別：</label>
         <select id="m-type">
             <option value="鉤針">鉤針 (Crochet)</option>
             <option value="棒針">棒針 (Knitting)</option>
         </select>
         
         <label>製作步驟：</label>
-        <textarea id="m-steps" rows="8" placeholder="例如：R1: 6X, R2: 6V..."></textarea>
+        <textarea id="m-steps" rows="8" placeholder="填寫詳細織法..."></textarea>
         
-        <label>備註事項：</label>
-        <textarea id="m-notes" rows="4" placeholder="線材品牌、色號、針號、完成時間..."></textarea>
+        <label>備註：</label>
+        <textarea id="m-notes" rows="4" placeholder="線材、針號、注意事項..."></textarea>
         
         <div class="btn-group">
-            <button class="btn btn-cancel" onclick="closeModal()">返回列表</button>
-            <button class="btn btn-save" onclick="saveData()">儲存修改</button>
+            <button class="btn btn-cancel" onclick="closeModal()">取消返回</button>
+            <button class="btn btn-save" id="save-btn" onclick="saveData()">儲存秘笈</button>
         </div>
-        <button id="del-btn" style="width:100%; margin-top:20px; color:#ff7675; border:none; background:none; font-size:14px;" onclick="deleteData()">⚠️ 刪除此份織譜</button>
+        <button id="del-btn" style="width:100%; margin-top:30px; color:#aaa; border:none; background:none; font-size:12px; text-decoration: underline;" onclick="deleteData()">刪除這份作品</button>
     </div>
 </div>
 
 <script>
-    let projects = JSON.parse(localStorage.getItem('mizai_db_v5')) || [];
+    // 使用新的資料庫 Key 避免與舊錯誤資料衝突
+    const DB_KEY = 'mizai_final_v6';
+    let projects = JSON.parse(localStorage.getItem(DB_KEY)) || [];
     let currentType = '鉤針';
     let editingId = null;
-    let tempImgs = []; // 儲存多張圖的 Base64 陣列
+    let tempImgs = []; 
 
     function switchTab(type) {
         currentType = type;
@@ -100,45 +105,59 @@
     function renderWall() {
         const grid = document.getElementById('project-grid');
         const list = projects.filter(p => p.type === currentType);
-        grid.innerHTML = list.length ? list.map(p => `
+        if (list.length === 0) {
+            grid.innerHTML = `<div style="grid-column:1/3; text-align:center; padding:50px 0; color:#ccc;">尚無紀錄</div>`;
+            return;
+        }
+        grid.innerHTML = list.map(p => `
             <div class="card" onclick="openDetail(${p.id})">
-                <img src="${p.imgs && p.imgs[0] ? p.imgs[0] : 'https://via.placeholder.com/150?text=No+Photo'}" class="card-img">
+                <img src="${(p.imgs && p.imgs[0]) ? p.imgs[0] : 'https://via.placeholder.com/150'}" class="card-img" loading="lazy">
                 <div class="card-info">${p.title}</div>
             </div>
-        `).join('') : '<p style="grid-column: 1/3; text-align:center; color:#999; margin-top:50px;">還沒有作品唷，點擊下方 + 開始記錄</p>';
+        `).join('');
     }
 
-    // 處理多圖上傳與壓縮
     async function processImages(input) {
-        if (input.files) {
-            const files = Array.from(input.files).slice(0, 5); // 最多 5 張
-            tempImgs = []; // 重置
-            document.getElementById('img-gallery-box').innerHTML = "處理中...";
+        if (!input.files.length) return;
+        
+        const saveBtn = document.getElementById('save-btn');
+        const status = document.getElementById('status-msg');
+        saveBtn.disabled = true;
+        status.style.display = 'block';
 
-            for (let file of files) {
+        const files = Array.from(input.files).slice(0, 5);
+        tempImgs = []; 
+
+        for (let file of files) {
+            try {
                 const base64 = await resizeImage(file);
                 tempImgs.push(base64);
+            } catch (err) {
+                console.error("圖片處理失敗", err);
             }
-            updateGalleryUI();
         }
+        
+        updateGalleryUI();
+        saveBtn.disabled = false;
+        status.style.display = 'none';
     }
 
     function resizeImage(file) {
         return new Promise((resolve) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = function(e) {
+            reader.onload = (e) => {
                 const img = new Image();
                 img.src = e.target.result;
-                img.onload = function() {
+                img.onload = () => {
                     const canvas = document.createElement('canvas');
-                    const MAX_WIDTH = 500; // 縮小尺寸以節省儲存空間
+                    const MAX_WIDTH = 400; // 強力壓縮寬度
                     const scale = MAX_WIDTH / img.width;
                     canvas.width = MAX_WIDTH;
                     canvas.height = img.height * scale;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.6)); // 壓縮畫質
+                    resolve(canvas.toDataURL('image/jpeg', 0.5)); // 降低畫質節省空間
                 };
             };
         });
@@ -146,62 +165,4 @@
 
     function updateGalleryUI() {
         const box = document.getElementById('img-gallery-box');
-        box.innerHTML = tempImgs.map(src => `<img src="${src}" class="gallery-item">`).join('') || '<span style="color:#ccc; font-size:13px;">尚未上傳照片</span>';
-    }
-
-    function openAdd() {
-        editingId = null; tempImgs = [];
-        document.getElementById('m-header').innerText = "新增織譜秘笈";
-        document.getElementById('m-title').value = "";
-        document.getElementById('m-steps').value = "";
-        document.getElementById('m-notes').value = "";
-        updateGalleryUI();
-        document.getElementById('del-btn').style.display = 'none';
-        document.getElementById('modal').style.display = 'block';
-    }
-
-    function openDetail(id) {
-        editingId = id;
-        const p = projects.find(item => item.id === id);
-        document.getElementById('m-header').innerText = "編輯織譜內容";
-        document.getElementById('m-title').value = p.title;
-        document.getElementById('m-type').value = p.type;
-        document.getElementById('m-steps').value = p.steps;
-        document.getElementById('m-notes').value = p.notes;
-        tempImgs = p.imgs || [];
-        updateGalleryUI();
-        document.getElementById('del-btn').style.display = 'block';
-        document.getElementById('modal').style.display = 'block';
-    }
-
-    function saveData() {
-        const title = document.getElementById('m-title').value.trim();
-        if (!title) { alert("請填寫作品名稱喔！"); return; }
-
-        const data = {
-            id: editingId || Date.now(),
-            title: title,
-            type: document.getElementById('m-type').value,
-            steps: document.getElementById('m-steps').value,
-            notes: document.getElementById('m-notes').value,
-            imgs: tempImgs
-        };
-
-        try {
-            if (editingId) {
-                const idx = projects.findIndex(p => p.id === editingId);
-                projects[idx] = data;
-            } else {
-                projects.push(data);
-            }
-            localStorage.setItem('mizai_db_v5', JSON.stringify(projects));
-            closeModal();
-            renderWall();
-        } catch (e) {
-            alert("哎呀！空間好像不夠了，請嘗試減少照片數量或刪除舊作品。");
-        }
-    }
-
-    function deleteData() {
-        if(confirm("確定要刪除這份秘笈嗎？")) {
-            projects = projects.
+        box.innerHTML = tempImgs.map(src => `<img src="${src}" class="gallery-item">`).join('') || '

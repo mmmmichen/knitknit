@@ -8,56 +8,52 @@
         :root { --p: #efa8b8; --text: #333; }
         body { font-family: -apple-system, sans-serif; background: #fafafa; margin: 0; padding-bottom: 80px; color: var(--text); -webkit-tap-highlight-color: transparent; }
         
-        /* 標題與分頁 */
         .header-box { background: white; padding: 20px 15px 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
         h1 { margin: 0 0 12px 0; font-size: 1.3rem; color: #444; letter-spacing: 1px; }
         .tabs { display: flex; border-radius: 20px; overflow: hidden; background: #eee; padding: 3px; }
-        .tab { flex: 1; padding: 10px; cursor: pointer; border-radius: 18px; font-size: 14px; text-align: center; transition: 0.2s; }
+        .tab { flex: 1; padding: 10px; cursor: pointer; border-radius: 18px; font-size: 14px; text-align: center; }
         .tab.active { background: #333; color: white; font-weight: bold; }
 
-        /* 作品牆 */
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding: 15px; }
         .card { background: white; border-radius: 15px; overflow: hidden; box-shadow: 0 3px 10px rgba(0,0,0,0.05); border: 1px solid #eee; }
         .card-img { width: 100%; aspect-ratio: 1/1; object-fit: cover; background: #f0f0f0; display: block; }
         .card-info { padding: 10px; text-align: center; font-size: 14px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-        /* 主要彈窗 (瀏覽/編輯) */
         #modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2000; overflow-y: auto; }
         .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 10; }
         .modal-body { padding: 20px; padding-bottom: 60px; }
 
-        /* 圖片放大檢視 (Lightbox) */
-        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; padding: 20px; box-sizing: border-box; }
-        #lightbox-img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 5px 20px rgba(0,0,0,0.5); }
-        .lightbox-hint { position: absolute; bottom: 20px; color: white; font-size: 14px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; }
+        /* Lightbox 大圖檢視 */
+        #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
+        #lightbox-img { max-width: 95%; max-height: 85%; object-fit: contain; border-radius: 5px; }
 
-        /* 瀏覽模式樣式 */
-        .view-title { font-size: 1.5rem; margin-bottom: 15px; font-weight: bold; color: #222; }
+        /* 內容樣式 */
+        .view-title { font-size: 1.5rem; margin-bottom: 15px; font-weight: bold; }
         .view-section { margin-bottom: 25px; }
         .view-label { font-size: 13px; color: var(--p); font-weight: bold; margin-bottom: 8px; display: block; }
-        .view-content { line-height: 1.7; white-space: pre-wrap; font-size: 16px; background: #fcfcfc; padding: 12px; border-radius: 10px; border: 1px solid #eee; color: #444; }
+        .view-content { line-height: 1.7; white-space: pre-wrap; font-size: 16px; background: #fcfcfc; padding: 12px; border-radius: 10px; border: 1px solid #eee; }
         
         /* 圖片展示區 */
-        .img-gallery { display: flex; gap: 12px; overflow-x: auto; padding: 5px; margin-bottom: 20px; }
-        /* 瀏覽模式的圖片 (可點擊) */
-        .view-gallery-item { width: 130px; height: 130px; flex-shrink: 0; object-fit: cover; border-radius: 12px; border: 1px solid #eee; background: #f9f9f9; cursor: zoom-in; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        /* 編輯模式的預覽圖 (不可點擊) */
-        .edit-gallery-item { width: 100px; height: 100px; flex-shrink: 0; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; opacity: 0.8; }
+        .img-gallery { display: flex; gap: 12px; overflow-x: auto; padding: 10px 5px; margin-bottom: 20px; }
+        .view-gallery-item { width: 130px; height: 130px; flex-shrink: 0; object-fit: cover; border-radius: 12px; border: 1px solid #eee; }
 
-        /* 編輯模式表單 */
+        /* 編輯模式：圖片管理卡片 */
+        .edit-img-container { position: relative; flex-shrink: 0; width: 100px; text-align: center; }
+        .edit-gallery-item { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+        .img-del-btn { position: absolute; top: -8px; right: -8px; background: #ff7675; color: white; border-radius: 50%; width: 22px; height: 22px; border: none; font-size: 12px; font-weight: bold; }
+        .img-move-btns { display: flex; justify-content: center; gap: 10px; margin-top: 5px; }
+        .move-btn { background: #eee; border: none; border-radius: 4px; padding: 2px 8px; font-size: 12px; color: #666; }
+
+        /* 表單 */
         label { font-size: 13px; color: #999; font-weight: bold; margin-top: 15px; display: block; }
-        input, textarea, select { width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; outline: none; }
-        input:focus, textarea:focus { border-color: var(--p); background: white; }
+        input, textarea, select { width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; }
         
-        /* 按鈕系統 */
-        .btn-round { padding: 8px 20px; border-radius: 20px; border: none; font-weight: bold; cursor: pointer; font-size: 14px; transition: 0.2s; }
-        .btn-edit { background: var(--p); color: white; box-shadow: 0 2px 5px rgba(239,168,184,0.4); }
-        .btn-cancel { background: #eee; color: #666; }
+        .btn-round { padding: 8px 20px; border-radius: 20px; border: none; font-weight: bold; }
+        .btn-edit { background: var(--p); color: white; }
         .btn-save { background: #333; color: white; width: 100%; padding: 15px; font-size: 16px; margin-top: 20px; border-radius: 12px; font-weight: bold; }
-        .btn-close { background: none; font-size: 28px; color: #999; border: none; padding: 0 10px; }
+        .btn-close { background: none; font-size: 28px; color: #999; border: none; }
         
-        .fab { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: var(--p); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; box-shadow: 0 4px 15px rgba(239,168,184,0.4); z-index: 500; transition: transform 0.2s; }
-        .fab:active { transform: scale(0.95); }
+        .fab { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: var(--p); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; box-shadow: 0 4px 15px rgba(239,168,184,0.4); z-index: 500; }
         .hidden { display: none; }
     </style>
 </head>
@@ -74,58 +70,39 @@
 <div class="grid" id="project-grid"></div>
 <button class="fab" onclick="openAdd()">+</button>
 
-<div id="lightbox" onclick="closeLightbox()">
-    <img id="lightbox-img" src="" onclick="event.stopPropagation()"> <div class="lightbox-hint">點擊背景關閉</div>
-</div>
+<div id="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""></div>
 
 <div id="modal">
     <div class="modal-header">
         <button class="btn-close" onclick="closeModal()">×</button>
         <div id="modal-nav-btns"></div>
     </div>
-
     <div class="modal-body">
         <div id="view-mode">
             <div id="v-imgs" class="img-gallery"></div>
             <div id="v-title" class="view-title"></div>
-            <div class="view-section">
-                <span class="view-label">製作步驟</span>
-                <div id="v-steps" class="view-content"></div>
-            </div>
-            <div class="view-section">
-                <span class="view-label">備註</span>
-                <div id="v-notes" class="view-content"></div>
-            </div>
+            <div class="view-section"><span class="view-label">製作步驟</span><div id="v-steps" class="view-content"></div></div>
+            <div class="view-section"><span class="view-label">備註</span><div id="v-notes" class="view-content"></div></div>
         </div>
 
         <div id="edit-mode" class="hidden">
-            <label style="margin-top:0;">更新照片 (最多 3 張)：</label>
-            <div id="e-img-preview" class="img-gallery" style="min-height: 100px; background: #f9f9f9; border-radius: 10px; align-items: center; padding: 10px;"></div>
-            <input type="file" id="e-file" accept="image/*" multiple onchange="processImages(this)" style="margin-top:10px;">
+            <label>管理照片 (最多 3 張)：</label>
+            <div id="e-img-preview" class="img-gallery" style="background: #fdfdfd; border: 1px dashed #ccc; border-radius: 10px; min-height: 140px; align-items: center;"></div>
+            <input type="file" id="e-file" accept="image/*" multiple onchange="processImages(this)">
             
-            <label>作品名稱：</label>
-            <input type="text" id="e-title">
-            
-            <label>類別：</label>
-            <select id="e-type">
-                <option value="鉤針">鉤針</option>
-                <option value="棒針">棒針</option>
-            </select>
-            
-            <label>製作步驟：</label>
-            <textarea id="e-steps" rows="10"></textarea>
-            
-            <label>備註：</label>
-            <textarea id="e-notes" rows="4"></textarea>
+            <label>作品名稱：</label><input type="text" id="e-title">
+            <label>類別：</label><select id="e-type"><option value="鉤針">鉤針</option><option value="棒針">棒針</option></select>
+            <label>製作步驟：</label><textarea id="e-steps" rows="10"></textarea>
+            <label>備註：</label><textarea id="e-notes" rows="4"></textarea>
             
             <button class="btn-save" id="save-btn" onclick="saveData()">儲存修改內容</button>
-            <button id="del-btn" style="width:100%; margin-top:30px; color:#ff7675; border:none; background:none; font-size:13px; padding: 10px;" onclick="deleteData()">刪除這份秘笈</button>
+            <button id="del-btn" style="width:100%; margin-top:30px; color:#ff7675; border:none; background:none; font-size:13px;" onclick="deleteData()">刪除這份秘笈</button>
         </div>
     </div>
 </div>
 
 <script>
-    const DB_KEY = 'mizai_final_v9'; // 更新版本號以區隔舊資料
+    const DB_KEY = 'mizai_v10';
     let projects = JSON.parse(localStorage.getItem(DB_KEY)) || [];
     let currentType = '鉤針';
     let editingId = null;
@@ -140,94 +117,90 @@
     function renderWall() {
         const grid = document.getElementById('project-grid');
         const list = projects.filter(p => p.type === currentType);
-        if (list.length === 0) {
-            grid.innerHTML = `<div style="grid-column:1/3; text-align:center; padding:60px 0; color:#ccc; font-size:14px;">目前沒有${currentType}紀錄<br>點擊右下角 + 新增</div>`;
-            return;
-        }
-        grid.innerHTML = list.map(p => `
+        grid.innerHTML = list.length ? list.map(p => `
             <div class="card" onclick="openDetail(${p.id})">
-                <img src="${(p.imgs && p.imgs[0]) ? p.imgs[0] : 'https://via.placeholder.com/300?text=No+Photo'}" class="card-img" loading="lazy">
+                <img src="${(p.imgs && p.imgs[0]) ? p.imgs[0] : 'https://via.placeholder.com/300'}" class="card-img">
                 <div class="card-info">${p.title}</div>
             </div>
-        `).join('');
-    }
-
-    // 打開圖片放大檢視
-    function openLightbox(src) {
-        document.getElementById('lightbox-img').src = src;
-        document.getElementById('lightbox').style.display = 'flex';
-    }
-    function closeLightbox() {
-        document.getElementById('lightbox').style.display = 'none';
+        `).join('') : '<div style="grid-column:1/3; text-align:center; padding:50px 0; color:#ccc;">尚無紀錄</div>';
     }
 
     function openDetail(id) {
         editingId = id;
         const p = projects.find(item => item.id === id);
         if (!p) return;
-
-        // 填充瀏覽內容 (加入 onclick 事件以開啟大圖)
         document.getElementById('v-title').innerText = p.title;
-        document.getElementById('v-steps').innerText = p.steps || "尚無步驟紀錄";
-        document.getElementById('v-notes').innerText = p.notes || "尚無備註";
-        document.getElementById('v-imgs').innerHTML = (p.imgs || []).map(src => 
-            `<img src="${src}" class="view-gallery-item" onclick="openLightbox('${src}')">`
-        ).join('');
-        
+        document.getElementById('v-steps').innerText = p.steps || "無內容";
+        document.getElementById('v-notes').innerText = p.notes || "無內容";
+        document.getElementById('v-imgs').innerHTML = (p.imgs || []).map(src => `<img src="${src}" class="view-gallery-item" onclick="showBig('${src}')">`).join('');
         document.getElementById('modal-nav-btns').innerHTML = `<button class="btn-round btn-edit" onclick="toggleEditMode(true)">編輯</button>`;
-        
         toggleEditMode(false);
         document.getElementById('modal').style.display = 'block';
     }
 
-    function toggleEditMode(isEdit) {
-        const viewArea = document.getElementById('view-mode');
-        const editArea = document.getElementById('edit-mode');
-        const navBtns = document.getElementById('modal-nav-btns');
+    function showBig(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').style.display = 'flex';
+    }
 
+    function toggleEditMode(isEdit) {
+        const viewArea = document.getElementById('view-mode'), editArea = document.getElementById('edit-mode');
         if (isEdit) {
-            viewArea.classList.add('hidden');
-            editArea.classList.remove('hidden');
-            navBtns.innerHTML = `<button class="btn-round btn-cancel" onclick="toggleEditMode(false)">取消</button>`;
-            
+            viewArea.classList.add('hidden'); editArea.classList.remove('hidden');
+            document.getElementById('modal-nav-btns').innerHTML = `<button class="btn-round" style="background:#eee" onclick="toggleEditMode(false)">取消</button>`;
             const p = projects.find(item => item.id === editingId) || { title:'', type:currentType, steps:'', notes:'', imgs:[] };
             document.getElementById('e-title').value = p.title;
             document.getElementById('e-type').value = p.type;
             document.getElementById('e-steps').value = p.steps;
             document.getElementById('e-notes').value = p.notes;
-            tempImgs = p.imgs || [];
-            updateEditPreview();
+            tempImgs = [...(p.imgs || [])];
+            renderEditGallery();
         } else {
-            viewArea.classList.remove('hidden');
-            editArea.classList.add('hidden');
-            if (editingId) {
-                navBtns.innerHTML = `<button class="btn-round btn-edit" onclick="toggleEditMode(true)">編輯</button>`;
-            }
+            viewArea.classList.remove('hidden'); editArea.classList.add('hidden');
+            if (editingId) document.getElementById('modal-nav-btns').innerHTML = `<button class="btn-round btn-edit" onclick="toggleEditMode(true)">編輯</button>`;
         }
     }
 
-    function openAdd() {
-        editingId = null;
-        tempImgs = [];
-        toggleEditMode(true);
-        document.getElementById('e-title').value = "";
-        document.getElementById('e-steps').value = "";
-        document.getElementById('e-notes').value = "";
-        updateEditPreview();
-        document.getElementById('del-btn').style.display = 'none';
-        document.getElementById('modal').style.display = 'block';
+    // 渲染編輯模式的圖片牆 (含刪除與移動按鈕)
+    function renderEditGallery() {
+        const box = document.getElementById('e-img-preview');
+        if (tempImgs.length === 0) { box.innerHTML = '<span style="color:#ccc; font-size:13px; margin:auto;">尚未選擇照片</span>'; return; }
+        
+        box.innerHTML = tempImgs.map((src, idx) => `
+            <div class="edit-img-container">
+                <img src="${src}" class="edit-gallery-item">
+                <button class="img-del-btn" onclick="removeImg(${idx})">×</button>
+                <div class="img-move-btns">
+                    <button class="move-btn" onclick="moveImg(${idx}, -1)">←</button>
+                    <button class="move-btn" onclick="moveImg(${idx}, 1)">→</button>
+                </div>
+            </div>
+        `).join('');
     }
 
-    // 圖片處理 (提升畫質)
-    async function processImages(input) {
-        const files = Array.from(input.files).slice(0, 3);
-        const saveBtn = document.getElementById('save-btn');
-        saveBtn.disabled = true;
-        saveBtn.innerText = "高畫質處理中...";
-        saveBtn.style.opacity = 0.7;
+    function removeImg(idx) {
+        tempImgs.splice(idx, 1);
+        renderEditGallery();
+    }
 
-        tempImgs = []; 
-        for (let file of files) {
+    function moveImg(idx, dir) {
+        const newIdx = idx + dir;
+        if (newIdx < 0 || newIdx >= tempImgs.length) return;
+        const [target] = tempImgs.splice(idx, 1);
+        tempImgs.splice(newIdx, 0, target);
+        renderEditGallery();
+    }
+
+    async function processImages(input) {
+        const files = Array.from(input.files);
+        if (tempImgs.length + files.length > 3) { alert("最多只能存 3 張照片喔！"); }
+        const remain = 3 - tempImgs.length;
+        const toProcess = files.slice(0, remain);
+
+        const saveBtn = document.getElementById('save-btn');
+        saveBtn.disabled = true; saveBtn.innerText = "處理中...";
+
+        for (let file of toProcess) {
             const base64 = await new Promise(resolve => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
@@ -236,67 +209,33 @@
                     img.src = e.target.result;
                     img.onload = () => {
                         const canvas = document.createElement('canvas');
-                        // 提升解析度至 600px
                         const MAX_WIDTH = 600;
                         canvas.width = MAX_WIDTH;
                         canvas.height = img.height * (MAX_WIDTH / img.width);
                         const ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        // 提升畫質至 0.7
                         resolve(canvas.toDataURL('image/jpeg', 0.7));
                     };
                 };
             });
             tempImgs.push(base64);
         }
-        updateEditPreview();
-        saveBtn.disabled = false;
-        saveBtn.innerText = "儲存修改內容";
-        saveBtn.style.opacity = 1;
-    }
-
-    function updateEditPreview() {
-        const box = document.getElementById('e-img-preview');
-        box.innerHTML = tempImgs.map(src => `<img src="${src}" class="edit-gallery-item">`).join('') || '<span style="color:#ccc; font-size:13px;">(尚未選擇照片)</span>';
+        renderEditGallery();
+        saveBtn.disabled = false; saveBtn.innerText = "儲存修改內容";
     }
 
     function saveData() {
         const title = document.getElementById('e-title').value.trim();
-        if (!title) { alert("請填寫作品名稱"); return; }
-
-        const data = {
-            id: editingId || Date.now(),
-            title: title,
-            type: document.getElementById('e-type').value,
-            steps: document.getElementById('e-steps').value,
-            notes: document.getElementById('e-notes').value,
-            imgs: tempImgs
-        };
-
-        try {
-            if (editingId) {
-                const idx = projects.findIndex(p => p.id === editingId);
-                projects[idx] = data;
-            } else {
-                projects.push(data);
-            }
-            localStorage.setItem(DB_KEY, JSON.stringify(projects));
-            openDetail(data.id);
-            renderWall();
-        } catch (e) {
-            alert("儲存失敗：可能是照片檔案過大，請嘗試減少照片數量。");
-        }
+        if (!title) return alert("請填寫作品名稱");
+        const data = { id: editingId || Date.now(), title, type: document.getElementById('e-type').value, steps: document.getElementById('e-steps').value, notes: document.getElementById('e-notes').value, imgs: tempImgs };
+        const idx = projects.findIndex(p => p.id === editingId);
+        if (idx > -1) projects[idx] = data; else projects.push(data);
+        localStorage.setItem(DB_KEY, JSON.stringify(projects));
+        openDetail(data.id); renderWall();
     }
 
-    function deleteData() {
-        if(confirm("確定要刪除這份秘笈嗎？")) {
-            projects = projects.filter(p => p.id !== editingId);
-            localStorage.setItem(DB_KEY, JSON.stringify(projects));
-            closeModal();
-            renderWall();
-        }
-    }
-
+    function openAdd() { editingId = null; tempImgs = []; toggleEditMode(true); document.getElementById('del-btn').style.display = 'none'; document.getElementById('modal').style.display = 'block'; }
+    function deleteData() { if(confirm("確定刪除？")) { projects = projects.filter(p => p.id !== editingId); localStorage.setItem(DB_KEY, JSON.stringify(projects)); closeModal(); renderWall(); } }
     function closeModal() { document.getElementById('modal').style.display = 'none'; }
     renderWall();
 </script>

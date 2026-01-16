@@ -1,22 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <link rel="manifest" href="manifest.json">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="apple-touch-icon" href="icon.png">
-
-<script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
-  }
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>咪仔織譜秘笈</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon.png">
+    
     <style>
         :root { --p: #efa8b8; --text: #333; }
-        body { font-family: -apple-system, sans-serif; background: #fafafa; margin: 0; padding-bottom: 80px; color: var(--text); -webkit-tap-highlight-color: transparent; }
+        body { font-family: -apple-system, sans-serif; background: #fafafa; margin: 0; padding-bottom: 100px; color: var(--text); -webkit-tap-highlight-color: transparent; }
         
         .header-box { background: white; padding: 20px 15px 10px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 100; }
         h1 { margin: 0 0 12px 0; font-size: 1.3rem; color: #444; letter-spacing: 1px; }
@@ -33,28 +29,23 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 15px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 10; }
         .modal-body { padding: 20px; padding-bottom: 60px; }
 
-        /* Lightbox 大圖檢視 */
         #lightbox { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 3000; justify-content: center; align-items: center; }
         #lightbox-img { max-width: 95%; max-height: 85%; object-fit: contain; border-radius: 5px; }
 
-        /* 內容樣式 */
         .view-title { font-size: 1.5rem; margin-bottom: 15px; font-weight: bold; }
         .view-section { margin-bottom: 25px; }
         .view-label { font-size: 13px; color: var(--p); font-weight: bold; margin-bottom: 8px; display: block; }
         .view-content { line-height: 1.7; white-space: pre-wrap; font-size: 16px; background: #fcfcfc; padding: 12px; border-radius: 10px; border: 1px solid #eee; }
         
-        /* 圖片展示區 */
         .img-gallery { display: flex; gap: 12px; overflow-x: auto; padding: 10px 5px; margin-bottom: 20px; }
         .view-gallery-item { width: 130px; height: 130px; flex-shrink: 0; object-fit: cover; border-radius: 12px; border: 1px solid #eee; }
 
-        /* 編輯模式：圖片管理卡片 */
         .edit-img-container { position: relative; flex-shrink: 0; width: 100px; text-align: center; }
         .edit-gallery-item { width: 100px; height: 100px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
         .img-del-btn { position: absolute; top: -8px; right: -8px; background: #ff7675; color: white; border-radius: 50%; width: 22px; height: 22px; border: none; font-size: 12px; font-weight: bold; }
         .img-move-btns { display: flex; justify-content: center; gap: 10px; margin-top: 5px; }
         .move-btn { background: #eee; border: none; border-radius: 4px; padding: 2px 8px; font-size: 12px; color: #666; }
 
-        /* 表單 */
         label { font-size: 13px; color: #999; font-weight: bold; margin-top: 15px; display: block; }
         input, textarea, select { width: 100%; margin: 8px 0; padding: 12px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; background: #fafafa; }
         
@@ -64,6 +55,9 @@
         .btn-close { background: none; font-size: 28px; color: #999; border: none; }
         
         .fab { position: fixed; bottom: 30px; right: 25px; width: 60px; height: 60px; background: var(--p); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; border: none; box-shadow: 0 4px 15px rgba(239,168,184,0.4); z-index: 500; }
+        
+        .system-tools { margin-top: 50px; padding: 20px; border-top: 1px solid #eee; text-align: center; }
+        .sys-btn { display: inline-block; background: #f0f0f0; color: #888; border: none; padding: 10px 15px; border-radius: 8px; font-size: 12px; margin: 5px; text-decoration: none; cursor: pointer; }
         .hidden { display: none; }
     </style>
 </head>
@@ -79,6 +73,13 @@
 
 <div class="grid" id="project-grid"></div>
 <button class="fab" onclick="openAdd()">+</button>
+
+<div class="system-tools">
+    <p style="font-size: 12px; color: #ccc; margin-bottom: 10px;">系統工具（更換設備或備份用）</p>
+    <button class="sys-btn" onclick="exportData()">💾 備份所有織譜</button>
+    <button class="sys-btn" onclick="document.getElementById('importFile').click()">📤 還原/匯入備份</button>
+    <input type="file" id="importFile" class="hidden" accept=".json" onchange="importData(this)">
+</div>
 
 <div id="lightbox" onclick="this.style.display='none'"><img id="lightbox-img" src=""></div>
 
@@ -99,12 +100,10 @@
             <label>管理照片 (最多 3 張)：</label>
             <div id="e-img-preview" class="img-gallery" style="background: #fdfdfd; border: 1px dashed #ccc; border-radius: 10px; min-height: 140px; align-items: center;"></div>
             <input type="file" id="e-file" accept="image/*" multiple onchange="processImages(this)">
-            
             <label>作品名稱：</label><input type="text" id="e-title">
             <label>類別：</label><select id="e-type"><option value="鉤針">鉤針</option><option value="棒針">棒針</option></select>
             <label>製作步驟：</label><textarea id="e-steps" rows="10"></textarea>
             <label>備註：</label><textarea id="e-notes" rows="4"></textarea>
-            
             <button class="btn-save" id="save-btn" onclick="saveData()">儲存修改內容</button>
             <button id="del-btn" style="width:100%; margin-top:30px; color:#ff7675; border:none; background:none; font-size:13px;" onclick="deleteData()">刪除這份秘笈</button>
         </div>
@@ -112,6 +111,13 @@
 </div>
 
 <script>
+    // 註冊 Service Worker
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed:', err));
+        });
+    }
+
     const DB_KEY = 'mizai_v10';
     let projects = JSON.parse(localStorage.getItem(DB_KEY)) || [];
     let currentType = '鉤針';
@@ -171,11 +177,9 @@
         }
     }
 
-    // 渲染編輯模式的圖片牆 (含刪除與移動按鈕)
     function renderEditGallery() {
         const box = document.getElementById('e-img-preview');
         if (tempImgs.length === 0) { box.innerHTML = '<span style="color:#ccc; font-size:13px; margin:auto;">尚未選擇照片</span>'; return; }
-        
         box.innerHTML = tempImgs.map((src, idx) => `
             <div class="edit-img-container">
                 <img src="${src}" class="edit-gallery-item">
@@ -188,11 +192,7 @@
         `).join('');
     }
 
-    function removeImg(idx) {
-        tempImgs.splice(idx, 1);
-        renderEditGallery();
-    }
-
+    function removeImg(idx) { tempImgs.splice(idx, 1); renderEditGallery(); }
     function moveImg(idx, dir) {
         const newIdx = idx + dir;
         if (newIdx < 0 || newIdx >= tempImgs.length) return;
@@ -203,10 +203,8 @@
 
     async function processImages(input) {
         const files = Array.from(input.files);
-        if (tempImgs.length + files.length > 3) { alert("最多只能存 3 張照片喔！"); }
-        const remain = 3 - tempImgs.length;
-        const toProcess = files.slice(0, remain);
-
+        const toProcess = files.slice(0, 3 - tempImgs.length);
+        if (toProcess.length === 0 && files.length > 0) alert("最多 3 張照片喔！");
         const saveBtn = document.getElementById('save-btn');
         saveBtn.disabled = true; saveBtn.innerText = "處理中...";
 
@@ -242,6 +240,39 @@
         if (idx > -1) projects[idx] = data; else projects.push(data);
         localStorage.setItem(DB_KEY, JSON.stringify(projects));
         openDetail(data.id); renderWall();
+    }
+
+    function exportData() {
+        const dataStr = JSON.stringify(projects);
+        const blob = new Blob([dataStr], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `mizai_backup_${new Date().toLocaleDateString()}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
+
+    function importData(input) {
+        const file = input.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (Array.isArray(imported)) {
+                    if (confirm("還原將會覆蓋目前手機內的資料，確定嗎？")) {
+                        projects = imported;
+                        localStorage.setItem(DB_KEY, JSON.stringify(projects));
+                        renderWall();
+                        alert("還原成功！");
+                    }
+                } else { alert("備份檔案格式不正確"); }
+            } catch (err) { alert("讀取檔案失敗"); }
+        };
+        reader.readAsText(file);
     }
 
     function openAdd() { editingId = null; tempImgs = []; toggleEditMode(true); document.getElementById('del-btn').style.display = 'none'; document.getElementById('modal').style.display = 'block'; }
